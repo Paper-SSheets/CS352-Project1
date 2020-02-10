@@ -1,4 +1,4 @@
-shell: shell.c
+shell: osh.c
 	gcc shell.c -o shell
 	
 clean:
