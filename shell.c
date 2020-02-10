@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------
--					   SE 185: Lab 07 - The DS4 Equalizer                   -
+-					   COM S 352: Project 1 - Unix Shell                    -
 -	Name:                                                                   -
 - 	Section:                                                                -
 -	NetID:                                                                  -
@@ -33,13 +33,13 @@ int main(int argc, char *argv[])
 
 
 /**
- * PRE: -39 <= number <= 39
- * Uses print_chars to graph a number from -39 to 39 on the screen.
- * You may assume that the screen is 80 characters wide.
+ * PRE: dab
+ * 
+ * POST: dab
  *
- * @param number - The amount of characters that are to be printed.
- * @param current_mode - The current mode the program is in.
- *                       {0:gyro_roll, 1:gyro_pitch, 2:joy_roll, 3:joy_pitch}
+ * @param number - dab
+ * @param current_mode - dab
+ *                      
  */
 void DELETE_THIS(int number, int current_mode)
 {
