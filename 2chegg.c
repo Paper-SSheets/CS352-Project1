@@ -1,44 +1,31 @@
 #include<stdio.h>
-
 #include<stdlib.h>
-
 #include<time.h>
-
 #include<string.h>
-
 #include<sys/wait.h>
-
 #include<sys/types.h>
-
 #include<sys/stat.h>
-
 #include<fctnl.h>
-
 #include<unistd.h>
-
 #include<signal.h>
-
 #include<limits.h>
-
 #include<errno.h>
 
 #define CMD_HISTORY_Size 10
 
-static char*cmd_history[CMD_HISTORY_SIZE];
+static char *cmd_history[CMD_HISTORY_SIZE];
 
-static int cmd_history_count=0;
+static int cmd_history_count = 0;
 
-static void exec_cmd(const char*line)
+static void exec_cmd(const char *line) {
 
-{
+    char *CMD = strdup(line);
 
-char *CMD = strdup(line);
+    char *params[10];
 
-char*params[10];
+    int argc = 0;
 
-int argc = 0;
-
-params[argc++] = strtok(CMD,"");
+    params[argc++] = strtok(CMD, "");
 
 }
 
@@ -46,7 +33,9 @@ argc--;
 
 int background = 0;
 
-if(strcmp(params[argc-1]"&"==0)
+if(
+strcmp(params[argc - 1]
+"&"==0)
 
 {
 
@@ -56,17 +45,21 @@ params[--argc] = NULL;
 
 }
 
-int fd[2] = {-1.-1};
+int fd[2] = {-1. - 1};
 
 while(argc>=3)
 
 {
 
-if(strcmp(param[argc-2],">")==0)
+if(
+strcmp(param[argc - 2],
+">")==0)
 
 {
 
-fd[1] = open(params[argsc-1],O_CREAT|O_WRONLY|O_TRUNC<S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP);
+fd[1] =
+open(params[argsc - 1], O_CREAT
+|O_WRONLY|O_TRUNC<S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP);
 
 if(fd[1] == -1)
 
@@ -86,11 +79,15 @@ argc -=2;
 
 }
 
-else if (strcmp(params[argc-2],"<") ==0)
+else if (
+strcmp(params[argc - 2],
+"<") ==0)
 
 {
 
-fd[0] = open(params[ardc-1],O_RDONLY);
+fd[0] =
+open(params[ardc - 1], O_RDONLY
+);
 
 if(fd[0]==-1)
 
@@ -122,7 +119,7 @@ break;
 
 int status;
 
-pid_t pid= fork();
+pid_t pid = fork();
 
 switch(pid)
 
@@ -140,7 +137,9 @@ if(fd[0]!=-1)
 
 {
 
-if(dup2(fd[0],STDIN_FILENO)!=STDIN_FILENO)
+if(
+dup2(fd[0],
+STDIN_FILENO)!=STDIN_FILENO)
 
 {
 
@@ -152,7 +151,8 @@ exit(1);
 
 }
 
-execvp(params[0],params);
+execvp(params[0], params
+);
 
 perror("execvp");
 
@@ -160,11 +160,13 @@ exit(0);
 
 default://parent
 
-close(fd[0]);close(fd[1]);
+close(fd[0]);
+close(fd[1]);
 
 if(!background)
 
-waitpid(pid,&status,0);
+waitpid(pid,
+&status,0);
 
 break;
 
@@ -174,226 +176,185 @@ free(CMD);
 
 }
 
-static void add_to_history(const char*cmd)
+static void add_to_history(const char *cmd) {
 
-{
+    if (cmd_history_count == (CMD_HISTORY_SIZE - 1)) {
 
-if(cmd_history_count ==(CMD_HISTORY_SIZE-1))
+        int i;
 
-{
+        free(cmd_history[0]);
 
-int i;
+        for (i = 1; i < cmd_history_count; i++)
 
-free(cmd_history[0]);
+            cmd - history[i - 1] = cmd_history[i];
 
-for(i=1;i<cmd_history_count;i++)
+        cmd_history_count--;
 
-cmd-history[i-1]=cmd_history[i];
+    }
 
-cmd_history_count--;
-
-}
-
-cmd_history[cmd_history_count++]=strdup(cmd)
+    cmd_history[cmd_history_count++] = strdup(cmd)
 
 }
 
-static void run_from_history(const char*cmd)
+static void run_from_history(const char *cmd) {
 
-{
+    int index = 0;
 
-int index = 0;
+    if (cmd_history_count == 0) {
 
-if(cmd_history_count ==0)
+        printf("no commands in history /n");
 
-{
+        return;
 
-printf("no commands in history /n");
+    }
 
-return;
+    if (cmd[1] == '!')
 
-}
+        index = cmd_history_count - 1;
 
-if(cmd[1]=='!')
+    else {
 
-index = cmd_history_count-1;
+        index = atoi(&cmd[1]) - 1;
 
-else
+        if ((index < 0) || (index > cmd_history_count)) {
 
-{
+            fprintf(stderr, "No such command in history./n");
 
-index = atoi(&cmd[1]) - 1;
+            return;
 
-if((index < 0)||(index > cmd_history_count))
+        }
 
-{
+    }
 
-fprintf(stderr,"No such command in history./n");
+    printf("%s/n", cmd);
 
-return;
-
-}
+    exec_cmd(cmd_history[index]);
 
 }
 
-printf("%s/n",cmd);
+static void list
+-
 
-exec_cmd(cmd_history[index]);
+history() {
 
-}
+    int i;
 
-static void list-history()
+    for (i = cmd_history_count - 1; i >= 0; i--) {
 
-{
+    }
 
-int i;
+    static void signal_handler(const int rc) {
 
-for(i=cmd_history_count-1;i>=0;i--)
+        switch (rc) {
 
-{
+            case SIGTERM:
 
-}
+            case SIGINT:
 
-static void signal_handler(const int rc)
+                break;
 
-{
+        }
 
-switch(rc)
-
-{
-
-case SIGTERM:
-
-case SIGINT:
-
-break;
-
-}
-
-}
+    }
 
 //main
 
-int main(int argc,char*argv[])
+    int main(int argc, char *argv[])
 
-struct sigaction act,act_old;
+    struct sigaction act, act_old;
 
-act.sa_handler = signal_handler;
+    act.sa_handler = signal_handler;
 
-act.sa_flags = 0;
+    act.sa_flags = 0;
 
-sigemptyset(&act.sa_mask);
+    sigemptyset(&act.sa_mask);
 
-if(sigaction(SIGCHLD,&act,&act_old)==-1))
+    if (sigaction(SIGCHLD, &act, &act_old) == -1))
 
-(sigation(SIGCHLD,&act,&act_old)==-1))
+    (sigation(SIGCHLD, &act, &act_old) == -1))
 
-{
+    {
 
-perror("signals");
+        perror("signals");
 
-return 1;
+        return 1;
 
-}
+    }
 
-size_t line_size=100;
+    size_t line_size = 100;
 
-char *line = (char)malloc(sizeof(char)*line_size);
+    char *line = (char) malloc(sizeof(char) * line_size);
 
-if(line == NULL)
+    if (line == NULL) {
 
-{
+        perror("malloc");
 
-perror("malloc");
+        return 1;
 
-return 1;
+    }
 
-}
+    int inter = 0;
 
-int inter = 0;
+    while (1) {
 
-while(1)
+        if (!inter)
 
-{
+            printf("mysh >");
 
-if(!inter)
+        if (getline(&line, &line_size, stdin) == -1) {
 
-printf("mysh >");
+            if (errno == EINTR) {
 
-if(getline(&line,&line_size,stdin)==-1)
+                clearerr(stdin);
 
-{
+                inter = 1;
 
-if(errno == EINTR)
+                continue;
 
-{
+            }
 
-clearerr(stdin);
+            perror("getline");
 
-inter = 1;
+            break;
 
-continue;
+        }
 
-}
+        inter = 0;
 
-perror("getline");
+        int line_len = strlen(line);
 
-break;
+        if (line_len == 1) {
 
-}
+            continue;
 
-inter = 0;
+        }
 
-int line_len = strlen(line);
+        line[line_len - 1] = '/0';
 
-if(line_len == 1)
+        if (strcmp(line, "history") == 0) {
 
-{
+            break;
 
-continue;
+        } else if (strcmp(line, "history") == 0) {
 
-}
+            list_history();
 
-line[line_len-1] ='/0';
+        } else if (line[0] == '!') {
 
-if(strcmp(line,"history") == 0)
+            run_from_history(line);
 
-{
+        } else {
 
-break;
+            add_to_history(line);
 
-}
+            exec_cmd(line);
 
-else if (strcmp(line,"history")==0)
+        }
 
-{
+    }
 
-list_history();
+    free(line);
 
-}
-
-else if(line[0]=='!')
-
-{
-
-run_from_history(line);
-
-}
-
-else
-
-{
-
-add_to_history(line);
-
-exec_cmd(line);
-
-}
-
-}
-
-free(line);
-
-return 0;
+    return 0;
 
 }
