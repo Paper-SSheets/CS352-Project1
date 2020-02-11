@@ -9,6 +9,7 @@
 /*----------------------------------------------------------------------------
 -								Includes									 -
 -----------------------------------------------------------------------------*/
+#include <stdbool.h>
 #include <stdio.h>
 
 /*----------------------------------------------------------------------------
@@ -24,15 +25,26 @@
 /*---------------------------------------------------------------------------
 -								Implementation                              -
 ----------------------------------------------------------------------------*/
-int main(int argc, char *argv[])
-{
-    printf("yeet");
+#define MAX_LINE 80 /* The maximum length command */
 
+int main(void) {
+    char *args[MAX_LINE / 2 + 1]; /* command line arguments */
+    bool should_run = true; /* flag to determine when to exit program */
+
+    printf("yeeet\n");
+    while (should_run) {
+        printf("osh>");
+        fflush(stdout);
+        /**
+        * After reading user input, the steps are:
+        * (1) fork a child process using fork()
+        * (2) the child process will invoke execvp()
+        * (3) parent will invoke wait() unless command included &
+        */
+        should_run = false; // tentative
+    }
     return 0;
 }
-
-
-
 
 
 /**
@@ -44,7 +56,6 @@ int main(int argc, char *argv[])
  * @param current_mode - dab
  *
  */
-void DELETE_THIS(int number, int current_mode)
-{
+void DELETE_THIS(int number, int current_mode) {
     // dab
 }
