@@ -1,5 +1,5 @@
 shell: osh.c
-	gcc shell.c -o shell
+	gcc osh.c -o osh
 	
 clean:
-	rm -f shell
+	rm -f osh
