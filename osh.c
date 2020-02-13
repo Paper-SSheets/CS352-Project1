@@ -27,11 +27,11 @@
 ----------------------------------------------------------------------------*/
 #define MAX_LINE 80 /* The maximum length command */
 
-int main(void) {
-    char *args[MAX_LINE / 2 + 1]; /* command line arguments */
+int main(int argc, char *argv[]) {
     bool should_run = true; /* flag to determine when to exit program */
+    char *prompt;
+    int i, j = 0;
 
-    printf("yeeet\n");
     while (should_run) {
         printf("osh>");
         fflush(stdout);
