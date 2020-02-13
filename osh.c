@@ -64,7 +64,6 @@ int main()
 
         if (strcmp(his, "!!") != 0)
         {
-
             in = 0;
             out = 0;
             pip = 0;
