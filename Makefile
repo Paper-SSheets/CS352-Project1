@@ -1,4 +1,4 @@
-shell: osh.c
+make: osh.c
 	gcc osh.c -o osh
 	
 clean:
