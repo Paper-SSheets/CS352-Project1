@@ -9,6 +9,7 @@
 /*----------------------------------------------------------------------------
 -								Includes									 -
 -----------------------------------------------------------------------------*/
+#include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
@@ -37,12 +38,11 @@
 ----------------------------------------------------------------------------*/
 int main()
 {
-
-    char *args[MAX_LINE / 2 + 1]; /* command line arguments */
+    char *args[MAX_LINE / 2 + 1]; /* Command line arguments */
     char *args2[MAX_LINE / 2 + 1];
     args[0] = NULL;
 
-    int should_run = 1; /* flag to determine when to exit program */
+    bool is_running = true; /* flag to determine when to exit program */
 
     int wordp = 0;
     int argc = 0;
@@ -53,9 +53,9 @@ int main()
     int pip = 0;
     int fos = 0;
 
-    pid_t pid = getpid();
+    getpid();
 
-    while (should_run)
+    while (is_running)
     {
         printf("osh>");
 
@@ -146,15 +146,13 @@ int main()
             }
 
             args[argc + 1] = (char *) NULL;
-
             args2[argc2 + 1] = (char *) NULL;
 
             if (!strcmp(args[0], "exit"))
             {
-                should_run = 0;
+                is_running = false;
             } else if (out || in)
             {
-
                 pid_t pid = fork();
 
                 if (pid)
@@ -177,7 +175,6 @@ int main()
 
             } else if (pip)
             {
-
                 int pipefd[2];
                 if (pipe(pipefd) < 0)
                 {
@@ -215,7 +212,6 @@ int main()
                 waitpid(pid2, NULL, 0);
             } else
             {
-
                 pid_t pid = fork();
 
                 if (pid)
@@ -233,9 +229,9 @@ int main()
         {
             his[0] = 0;
 
-            if (args[0] == NULL)
+            if (!args[0])
             {
-                printf("No commands in history\n");
+                printf("No commands in history.\n");
             } else if (out || in)
             {
 
@@ -261,7 +257,6 @@ int main()
 
             } else if (pip)
             {
-
                 int pipefd[2];
                 if (pipe(pipefd) < 0)
                 {
@@ -299,7 +294,6 @@ int main()
                 waitpid(pid2, NULL, 0);
             } else
             {
-
                 pid_t pid = fork();
 
                 if (pid)
