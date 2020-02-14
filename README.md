@@ -3,8 +3,8 @@
 
 # UNIX Shell
 - An implementation of the UNIX Shell project described at the end of 
-  Chapter 3: Processes of the textbook Operating System Concepts 
-  (Abraham Silberschatz, Greg Gagne, Peter B. Galvin) [2018].
+  Chapter 3: Processes, of the textbook **Operating System Concepts 
+  (Abraham Silberschatz, Greg Gagne, Peter B. Galvin) [2018]**.
 
 ## How to Test
 - The tests for this will describe basic input/output for the program,
