@@ -24,292 +24,263 @@
 -----------------------------------------------------------------------------*/
 #define MAX_LINE 80 /* The maximum length command */
 
+/*----------------------------------------------------------------------------
+-	                                Notes                                    -
+-----------------------------------------------------------------------------*/
+/* This file parses the input string inside of the main loop by taking in
+ * each command. Once these have been parsed, a child process is created to
+ * be executed each command. These commands also have the functionality to
+ * be inputted and outputted into files, and pipeline the commands into
+ * other commands. View README.md for sample usage.                          */
 
-/*
-  DOCUMENTATION
-
-  This file contains all functions in the PA1. This file parses the in put string inside of a main
-  loop taking in each command line pramater. Once thoes have been parsed it creats child processes
-  to exicute each command. The commands can also input and output into files aswell as pipeline
-  the output of other commands into other commands.
- */
 /*---------------------------------------------------------------------------
 -								Implementation                              -
 ----------------------------------------------------------------------------*/
 int main()
 {
     char *args[MAX_LINE / 2 + 1]; /* Command line arguments */
-    char *args2[MAX_LINE / 2 + 1];
     args[0] = NULL;
+    char *args2[MAX_LINE / 2 + 1];
 
-    bool is_running = true; /* flag to determine when to exit program */
-
-    int wordp = 0;
+    int word_position = 0;
     int argc = 0;
     int argc2 = 0;
 
-    int in = 0;
-    int out = 0;
-    int pip = 0;
-    int fos = 0;
+    bool is_running = true; /* Exit shell if "exit" is inputted by the user */
+    bool input = false;     /* True if '<', False otherwise */
+    bool output = false;    /* True if '>', False otherwise */
+    bool piped = false;     /* True if '|', False otherwise */
+    bool first_or_second;   /* True if first, False if second */
 
     getpid();
 
     while (is_running)
     {
         printf("osh>");
-
         fflush(stdout);
 
-        char temp[100];
-        char temp2[50];
+        char tmp[100];
+        char tmp2[50];
+        char history[3];
 
-        fgets(temp, 50, stdin);
+        fgets(tmp, 50, stdin);
 
-        char his[3];
-
-        if (strlen(temp) == 3)
+        if (strlen(tmp) == 3)
         {
-            his[0] = temp[0];
-            his[1] = temp[1];
-            his[2] = 0;
+            history[0] = tmp[0];
+            history[1] = tmp[1];
+            history[2] = 0;
         }
 
-        if (strcmp(his, "!!") != 0)
+        if (strcmp(history, "!!") != 0)
         {
-            in = 0;
-            out = 0;
-            pip = 0;
-            fos = 0;
-
-            if (strstr(temp, "<") != NULL)
+            input = output = piped = first_or_second = false;
+            if (strstr(tmp, "<"))
             {
-                in = 1;
-            } else if (strstr(temp, ">") != NULL)
+                input = true;
+            } else if (strstr(tmp, "|"))
             {
-                out = 1;
-            } else if (strstr(temp, "|") != NULL)
+                piped = true;
+            } else if (strstr(tmp, ">"))
             {
-                pip = 1;
+                output = true;
             }
 
-            wordp = 0;
-            argc = 0;
-            argc2 = 0;
-
+            word_position = argc = argc2 = 0;
             int i = 0;
-
-            for (i = 0; i < strlen(temp) - 1; i++)
+            for (i = 0; i < strlen(tmp) - 1; i++)
             {
-                if (i == strlen(temp) - 2)
+                if (i == strlen(tmp) - 2)
                 {
-                    temp2[wordp] = temp[i];
-                    wordp++;
-                    temp2[wordp] = 0;
-                    if (fos)
+                    tmp2[word_position] = tmp[i];
+                    word_position++;
+                    tmp2[word_position] = 0;
+                    if (first_or_second)
                     {
-                        args2[argc2] = (char *) malloc(sizeof(wordp));
-                        strcpy(args2[argc2], temp2);
+                        args2[argc2] = (char *) malloc(sizeof(word_position));
+                        strcpy(args2[argc2], tmp2);
                     } else
                     {
-                        args[argc] = (char *) malloc(sizeof(wordp));
-                        strcpy(args[argc], temp2);
+                        args[argc] = (char *) malloc(sizeof(word_position));
+                        strcpy(args[argc], tmp2);
                     }
-                } else if (temp[i] == '<' || temp[i] == '|' || temp[i] == '>')
+                } else if (tmp[i] == '<' || tmp[i] == '|' || tmp[i] == '>')
                 {
-                    wordp = 0;
-                    fos = 1;
+                    word_position = 0;
+                    first_or_second = true;
                     i++;
                     argc--;
-                } else if (temp[i] == ' ')
+                } else if (tmp[i] == ' ')
                 {
-                    temp2[wordp] = 0;
-                    if (fos)
+                    tmp2[word_position] = 0;
+                    if (first_or_second)
                     {
-                        args2[argc] = (char *) malloc(sizeof(wordp));
-                        strcpy(args2[argc], temp2);
+                        args2[argc] = (char *) malloc(sizeof(word_position));
+                        strcpy(args2[argc], tmp2);
                         argc2++;
                     } else
                     {
-                        args[argc] = (char *) malloc(sizeof(wordp));
-                        strcpy(args[argc], temp2);
+                        args[argc] = (char *) malloc(sizeof(word_position));
+                        strcpy(args[argc], tmp2);
                         argc++;
                     }
-                    wordp = 0;
-
+                    word_position = 0;
                 } else
                 {
-                    temp2[wordp] = temp[i];
-                    wordp++;
+                    tmp2[word_position] = tmp[i];
+                    word_position++;
                 }
-
             }
 
             args[argc + 1] = (char *) NULL;
             args2[argc2 + 1] = (char *) NULL;
-
             if (!strcmp(args[0], "exit"))
             {
                 is_running = false;
-            } else if (out || in)
+            } else if (output || input)
             {
                 pid_t pid = fork();
-
                 if (pid)
                 {
                     wait(NULL);
                 } else
                 {
-                    int fd = open(args2[0], O_RDWR | O_CREAT, S_IROTH | S_IRWXU);
-                    if (out)
+                    int file_descriptor = open(args2[0], O_RDWR | O_CREAT, S_IROTH | S_IRWXU);
+                    if (output)
                     {
-                        dup2(fd, 1);
+                        dup2(file_descriptor, 1);
                     } else
                     {
-                        dup2(fd, 0);
+                        dup2(file_descriptor, 0);
                     }
                     execvp(args[0], args);
-                    printf("ERROR");
+                    printf("An error has occurred.");
                     exit(1);
                 }
-
-            } else if (pip)
+            } else if (piped)
             {
-                int pipefd[2];
-                if (pipe(pipefd) < 0)
+                int pipe_file_descriptor[2];
+                if (pipe(pipe_file_descriptor) < 0)
                 {
-                    printf("Pipe error!\n");
+                    printf("A pipe error has occurred.\n");
                     return 1;
                 }
 
                 int pid2 = fork();
-                if (pid2 == 0)
+                if (pid2 == 0) // Child 2
                 {
-                    // Child 2
-                    close(pipefd[1]);    // we don't write to the pipe read end of pipe pipfd[0]
-                    dup2(pipefd[0], 0);
+                    close(pipe_file_descriptor[1]);
+                    dup2(pipe_file_descriptor[0], 0);
                     execvp(args2[0], args2);
-                    printf("ERROR1");
+                    printf("An error has occurred.");
                     exit(1);
                 }
 
                 int pid1 = fork();
-                if (pid1 == 0)
+                if (pid1 == 0) // Child 1
                 {
-                    // Child 1
-                    close(pipefd[0]);    // we don't read to the pipe write end of pipe pipefd[1]
-                    dup2(pipefd[1], 1);
+                    close(pipe_file_descriptor[0]);
+                    dup2(pipe_file_descriptor[1], 1);
                     execvp(args[0], args);
-                    printf("ERROR2");
+                    printf("An error has occurred.");
                     exit(1);
                 }
 
-                // Parent... close pipe and wait for children
-                close(pipefd[0]);  // if you take this out, we will hang!
-                close(pipefd[1]);
+                // Parent
+                close(pipe_file_descriptor[0]);
+                close(pipe_file_descriptor[1]);
 
                 waitpid(pid1, NULL, 0);
                 waitpid(pid2, NULL, 0);
             } else
             {
                 pid_t pid = fork();
-
                 if (pid)
                 {
                     wait(NULL);
                 } else
                 {
                     execvp(args[0], args);
-                    printf("ERROR");
+                    printf("An error has occurred.");
                     exit(1);
                 }
             }
-
         } else
         {
-            his[0] = 0;
-
+            history[0] = 0;
             if (!args[0])
             {
                 printf("No commands in history.\n");
-            } else if (out || in)
+            } else if (output || input)
             {
-
                 pid_t pid = fork();
-
                 if (pid)
                 {
                     wait(NULL);
                 } else
                 {
-                    int fd = open(args2[0], O_RDWR | O_CREAT, S_IROTH | S_IRWXU);
-                    if (out)
+                    int file_descriptor = open(args2[0], O_RDWR | O_CREAT, S_IROTH | S_IRWXU);
+                    if (output)
                     {
-                        dup2(fd, 1);
+                        dup2(file_descriptor, 1);
                     } else
                     {
-                        dup2(fd, 0);
+                        dup2(file_descriptor, 0);
                     }
                     execvp(args[0], args);
-                    printf("ERROR");
+                    printf("An error has occurred.");
                     exit(1);
                 }
-
-            } else if (pip)
+            } else if (piped)
             {
-                int pipefd[2];
-                if (pipe(pipefd) < 0)
+                int pipe_file_descriptor[2];
+                if (pipe(pipe_file_descriptor) < 0)
                 {
-                    printf("Pipe error!\n");
+                    printf("A pipe error has occurred.\n");
                     return 1;
                 }
 
                 int pid2 = fork();
-                if (pid2 == 0)
+                if (pid2 == 0) // Child 2
                 {
-                    // Child 2
-                    close(pipefd[1]);    // we don't write to the pipe read end of pipe pipfd[0]
-                    dup2(pipefd[0], 0);
+                    close(pipe_file_descriptor[1]);
+                    dup2(pipe_file_descriptor[0], 0);
                     execvp(args2[0], args2);
-                    printf("ERROR1");
+                    printf("A pipe error has occurred.");
                     exit(1);
                 }
 
                 int pid1 = fork();
-                if (pid1 == 0)
+                if (pid1 == 0) // Child 1
                 {
-                    // Child 1
-                    close(pipefd[0]);    // we don't read to the pipe write end of pipe pipefd[1]
-                    dup2(pipefd[1], 1);
+                    close(pipe_file_descriptor[0]);
+                    dup2(pipe_file_descriptor[1], 1);
                     execvp(args[0], args);
-                    printf("ERROR2");
+                    printf("An error has occurred.");
                     exit(1);
                 }
 
-                // Parent... close pipe and wait for children
-                close(pipefd[0]);  // if you take this out, we will hang!
-                close(pipefd[1]);
+                // Parent
+                close(pipe_file_descriptor[0]);
+                close(pipe_file_descriptor[1]);
 
                 waitpid(pid1, NULL, 0);
                 waitpid(pid2, NULL, 0);
             } else
             {
                 pid_t pid = fork();
-
                 if (pid)
                 {
                     wait(NULL);
                 } else
                 {
                     execvp(args[0], args);
-                    printf("ERROR");
+                    printf("An error has occurred.");
                     exit(1);
                 }
             }
         }
     }
 
-
     return 0;
-
 }
