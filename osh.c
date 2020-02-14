@@ -154,7 +154,7 @@ int main()
                         dup2(file_descriptor, 0);
                     }
                     execvp(args[0], args);
-                    printf("An error has occurred.");
+                    printf("An error has occurred.\n");
                     exit(1);
                 }
             } else if (piped)
@@ -172,7 +172,7 @@ int main()
                     close(pipe_file_descriptor[1]);
                     dup2(pipe_file_descriptor[0], 0);
                     execvp(args2[0], args2);
-                    printf("An error has occurred.");
+                    printf("An error has occurred.\n");
                     exit(1);
                 }
 
@@ -182,7 +182,7 @@ int main()
                     close(pipe_file_descriptor[0]);
                     dup2(pipe_file_descriptor[1], 1);
                     execvp(args[0], args);
-                    printf("An error has occurred.");
+                    printf("An error has occurred.\n");
                     exit(1);
                 }
 
@@ -201,7 +201,7 @@ int main()
                 } else
                 {
                     execvp(args[0], args);
-                    printf("An error has occurred.");
+                    printf("An error has occurred.\n");
                     exit(1);
                 }
             }
@@ -228,7 +228,7 @@ int main()
                         dup2(file_descriptor, 0);
                     }
                     execvp(args[0], args);
-                    printf("An error has occurred.");
+                    printf("An error has occurred.\n");
                     exit(1);
                 }
             } else if (piped)
@@ -246,7 +246,7 @@ int main()
                     close(pipe_file_descriptor[1]);
                     dup2(pipe_file_descriptor[0], 0);
                     execvp(args2[0], args2);
-                    printf("A pipe error has occurred.");
+                    printf("A pipe error has occurred.\n");
                     exit(1);
                 }
 
@@ -256,7 +256,7 @@ int main()
                     close(pipe_file_descriptor[0]);
                     dup2(pipe_file_descriptor[1], 1);
                     execvp(args[0], args);
-                    printf("An error has occurred.");
+                    printf("An error has occurred.\n");
                     exit(1);
                 }
 
@@ -275,7 +275,7 @@ int main()
                 } else
                 {
                     execvp(args[0], args);
-                    printf("An error has occurred.");
+                    printf("An error has occurred.\n");
                     exit(1);
                 }
             }
