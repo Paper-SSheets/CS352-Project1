@@ -20,11 +20,6 @@
 #include <fcntl.h>
 
 /*----------------------------------------------------------------------------
--	                              Defines                                    -
------------------------------------------------------------------------------*/
-#define MAX_LINE 80 /* The maximum length command */
-
-/*----------------------------------------------------------------------------
 -	                                Notes                                    -
 -----------------------------------------------------------------------------*/
 /* This file parses the input string inside of the main loop by taking in
@@ -38,9 +33,9 @@
 ----------------------------------------------------------------------------*/
 int main()
 {
-    char *args[MAX_LINE / 2 + 1]; /* Command line arguments */
+    char *args[80 / 2 + 1]; /* Command line arguments */
     args[0] = NULL;
-    char *args2[MAX_LINE / 2 + 1];
+    char *args2[80 / 2 + 1];
 
     int word_position = 0;
     int argc = 0;
