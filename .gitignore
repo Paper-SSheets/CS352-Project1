@@ -2,5 +2,5 @@
 .idea
 HackerRank.iml
 cmake-build-debug
-# CMakeLists.txt
+CMakeLists.txt
 osh
