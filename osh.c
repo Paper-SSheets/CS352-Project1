@@ -26,7 +26,7 @@
  * each command. Once these have been parsed, a child process is created to
  * be executed each command. These commands also have the functionality to
  * be inputted and outputted into files, and pipeline the commands into
- * other commands. View README.md for sample usage.                          */
+ * other commands. View README.md for sample usages.                         */
 
 /*---------------------------------------------------------------------------
 -								Implementation                              -
