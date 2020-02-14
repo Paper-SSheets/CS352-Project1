@@ -1,3 +1,14 @@
+/*---------------------------------------------------------------------------
+-					   COM S 352: Project 1 - Unix Shell                    -
+-	Name: Steven Marshall Sheets                                            -
+- 	Section: A-2                                                            -
+-	NetID: smsheets@iastate.edu                                             -
+-	Date: 2/5/2020                                                          -
+----------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------
+-								Includes									 -
+-----------------------------------------------------------------------------*/
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
@@ -43,7 +54,6 @@ int main()
 
     while (should_run)
     {
-
         printf("osh>");
 
         fflush(stdout);
@@ -88,11 +98,8 @@ int main()
 
             for (i = 0; i < strlen(temp) - 1; i++)
             {
-
                 if (i == strlen(temp) - 2)
                 {
-                    //printf("%c\n", temp[i]);
-                    //printf("break\n");
                     temp2[wordp] = temp[i];
                     wordp++;
                     temp2[wordp] = 0;
@@ -105,7 +112,7 @@ int main()
                         args[argc] = (char *) malloc(sizeof(wordp));
                         strcpy(args[argc], temp2);
                     }
-                } else if (temp[i] == '>' || temp[i] == '<' || temp[i] == '|')
+                } else if (temp[i] == '<' || temp[i] == '|' || temp[i] == '>')
                 {
                     wordp = 0;
                     fos = 1;
@@ -113,8 +120,6 @@ int main()
                     argc--;
                 } else if (temp[i] == ' ')
                 {
-                    //printf("space\n ");
-
                     temp2[wordp] = 0;
                     if (fos)
                     {
@@ -131,7 +136,6 @@ int main()
 
                 } else
                 {
-                    //printf("%c\n", temp[i]);
                     temp2[wordp] = temp[i];
                     wordp++;
                 }
