@@ -18,7 +18,9 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-
+/*----------------------------------------------------------------------------
+-	                              Defines                                    -
+-----------------------------------------------------------------------------*/
 #define MAX_LINE 80 /* The maximum length command */
 
 
@@ -29,9 +31,10 @@
   loop taking in each command line pramater. Once thoes have been parsed it creats child processes
   to exicute each command. The commands can also input and output into files aswell as pipeline
   the output of other commands into other commands.
-
  */
-
+/*---------------------------------------------------------------------------
+-								Implementation                              -
+----------------------------------------------------------------------------*/
 int main()
 {
 
